@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "reactbubblebubbleserver",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Akows/ReactBubbleBubble.git"
+  },
+  "keywords": [
+    "reactbubblebubble"
+  ],
+  "author": "Lee YuSeung",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Akows/ReactBubbleBubble/issues"
+  },
+  "homepage": "https://github.com/Akows/ReactBubbleBubble#readme"
+}
