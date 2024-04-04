@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Footer } from './components/layout/Footer';
 import { Header } from './components/layout/Header';
 import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
 
 const MainContent = styled.main`
   display: flex;
@@ -19,6 +20,7 @@ function App() {
         <MainContent>
           <Routes>
               <Route path="/" element={<HomePage />}/>
+              <Route path="/login" element={<LoginPage />}/>
           </Routes>
         </MainContent>
       <Footer />

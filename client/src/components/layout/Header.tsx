@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const HeaderContainer = styled.header`
@@ -34,6 +35,9 @@ const MyPageButton = styled(StartButton)`
 
 export const Header: React.FC = () => {
 
+  // 페이지 이동을 위한 useNavigate
+  const navigate = useNavigate();
+
   // 사용자 로그인 여부를 판별하는 state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -45,7 +49,7 @@ export const Header: React.FC = () => {
   return (
     <>      
       <HeaderContainer>
-        <Logo>리액트글방울</Logo>
+        <Logo onClick={() => navigate('/')}>리액트글방울</Logo>
         {isLoggedIn ? (
           <MyPageButton onClick={moveFunc}>마이 페이지</MyPageButton>
         ) : (
