@@ -1,11 +1,10 @@
 import styled from 'styled-components';
-import { Footer } from '../components/layout/Footer';
-import { Header } from '../components/layout/Header';
 
 const Container = styled.div`
   background-color: #242424;
   color: white;
   min-height: 100vh;
+  margin-top: 50px;
   padding: 2rem;
 `;
 
@@ -112,8 +111,6 @@ const ContentCard = styled.div`
 const HomePage = () => {
   return (
     <>
-      <Header/>
-
       <Container>
         <Head>전 세계에 있는 React.js 글을 한 번에 모아보기!</Head>
         <SearchBarContainer>
@@ -134,10 +131,24 @@ const HomePage = () => {
             <div className="meta">https://좋은글보려고왔습니다.com | 2024-01-01</div>
           </div>
         </ContentCard>
+        <ContentCard>
+          <div className="thumbnail"></div>
+          <div className="content-info">
+            <div className="title">글 제목</div>
+            <div className="summary">이곳에는 글 내용의 일부를 미리보기로 보여줍니다..</div>
+            <div className="meta">https://좋은글보려고왔습니다.com | 2024-01-01</div>
+          </div>
+        </ContentCard>
+        <ContentCard>
+          <div className="thumbnail"></div>
+          <div className="content-info">
+            <div className="title">글 제목</div>
+            <div className="summary">이곳에는 글 내용의 일부를 미리보기로 보여줍니다..</div>
+            <div className="meta">https://좋은글보려고왔습니다.com | 2024-01-01</div>
+          </div>
+        </ContentCard>
 
       </Container>
-    
-      <Footer/>
     </>
   );
 };

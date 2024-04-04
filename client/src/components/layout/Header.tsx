@@ -2,15 +2,12 @@ import React, { useState } from 'react'
 import styled from 'styled-components';
 
 const HeaderContainer = styled.header`
-  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
   background-color: #242424;
   color: white;
-
-  border: 2px solid wheat;
 `;
 
 const Logo = styled.h1`

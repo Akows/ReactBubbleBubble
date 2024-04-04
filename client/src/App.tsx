@@ -1,14 +1,27 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css'
+import styled from 'styled-components';
+import { Footer } from './components/layout/Footer';
+import { Header } from './components/layout/Header';
 import HomePage from './pages/HomePage';
 
-function App() {
+const MainContent = styled.main`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: baseline;
+`;
 
+function App() {
   return (
     <BrowserRouter>
-      <Routes>
-          <Route path="/" element={<HomePage />}/>
-      </Routes>
+      <Header />
+        <MainContent>
+          <Routes>
+              <Route path="/" element={<HomePage />}/>
+          </Routes>
+        </MainContent>
+      <Footer />
     </BrowserRouter>
   );
 
