@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { Footer } from '../components/layout/Footer';
+import { Header } from '../components/layout/Header';
 
 const Container = styled.div`
   background-color: #242424;
@@ -7,7 +9,7 @@ const Container = styled.div`
   padding: 2rem;
 `;
 
-const Header = styled.header`
+const Head = styled.header`
   margin-bottom: 2rem;
   font-size: 1.5rem;
 `;
@@ -109,28 +111,34 @@ const ContentCard = styled.div`
 
 const HomePage = () => {
   return (
-    <Container>
-      <Header>전 세계에 있는 React.js 글을 한 번에 모아보기!</Header>
-      <SearchBarContainer>
-        <Input type="text" placeholder="검색어를 입력해주세요" />
-        <Button>Search</Button>
-      </SearchBarContainer>
-      <ButtonsRow>
-        <Button>전체보기</Button>
-        <Button>북마크보기</Button>
-      </ButtonsRow>
+    <>
+      <Header/>
 
-      {/* map 함수로 컨텐츠들을 렌더링하는 부분.. */}
-      <ContentCard>
-        <div className="thumbnail"></div>
-        <div className="content-info">
-          <div className="title">글 제목</div>
-          <div className="summary">이곳에는 글 내용의 일부를 미리보기로 보여줍니다..</div>
-          <div className="meta">https://좋은글보려고왔습니다.com | 2024-01-01</div>
-        </div>
-      </ContentCard>
+      <Container>
+        <Head>전 세계에 있는 React.js 글을 한 번에 모아보기!</Head>
+        <SearchBarContainer>
+          <Input type="text" placeholder="검색어를 입력해주세요" />
+          <Button>Search</Button>
+        </SearchBarContainer>
+        <ButtonsRow>
+          <Button>전체보기</Button>
+          <Button>북마크보기</Button>
+        </ButtonsRow>
 
-    </Container>
+        {/* map 함수로 컨텐츠들을 렌더링하는 부분.. */}
+        <ContentCard>
+          <div className="thumbnail"></div>
+          <div className="content-info">
+            <div className="title">글 제목</div>
+            <div className="summary">이곳에는 글 내용의 일부를 미리보기로 보여줍니다..</div>
+            <div className="meta">https://좋은글보려고왔습니다.com | 2024-01-01</div>
+          </div>
+        </ContentCard>
+
+      </Container>
+    
+      <Footer/>
+    </>
   );
 };
 
