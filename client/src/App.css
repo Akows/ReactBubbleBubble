@@ -1,7 +1,13 @@
+/* Google 폰트 (Noto Sans Korean) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+
+/* 프로젝트 전체 배경색 */
 #root {
 	background-color: #242424;
+	font-family: 'Noto Sans KR', sans-serif;
 }
 
+/* Reset CSS 설정 */
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
