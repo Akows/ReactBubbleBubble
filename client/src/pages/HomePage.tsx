@@ -1,4 +1,7 @@
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import bookmarkIconEmpty from '../assets/bookmark_black_24dp.svg';
+import bookmarkIconFilled from '../assets/bookmark_border_black_24dp.svg';
 
 const Container = styled.div`
   background-color: #242424;
@@ -6,6 +9,9 @@ const Container = styled.div`
   min-height: 100vh;
   margin-top: 50px;
   padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  margin: 50px auto;
 `;
 
 const Head = styled.header`
@@ -29,6 +35,7 @@ const Input = styled.input`
   border: none;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
+  font-family: 'Noto Sans KR', sans-serif;
 
   @media (min-width: 768px) {
     margin-bottom: 0;
@@ -88,6 +95,7 @@ const ContentCard = styled.div`
 
   .content-info {
     flex: 1;
+    width: 100%;
 
     .title {
       font-size: 1.2rem;
@@ -103,12 +111,39 @@ const ContentCard = styled.div`
     .meta {
       font-size: 0.8rem;
       color: #999;
-      margin-top: 0.5rem;
+    }
+
+    .meta-and-bookmark {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+    }
+
+    .bookmark-btn {
+      font-size: 0.4rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
     }
   }
 `;
 
-const HomePage = () => {
+const BookmarkIcon = styled.img`
+  width: 24px; // 아이콘 크기
+  height: 24px;
+`;
+
+const HomePage: React.FC = () => {
+
+  const [isBookmarked, setIsBookmarked] = useState(false); // 초기 북마크 상태는 false
+
+  const toggleBookmark = () => {
+    setIsBookmarked(!isBookmarked); // 현재 상태를 반대로 토글
+  };
+
   return (
     <>
       <Container>
@@ -128,23 +163,18 @@ const HomePage = () => {
           <div className="content-info">
             <div className="title">글 제목</div>
             <div className="summary">이곳에는 글 내용의 일부를 미리보기로 보여줍니다..</div>
-            <div className="meta">https://좋은글보려고왔습니다.com | 2024-01-01</div>
-          </div>
-        </ContentCard>
-        <ContentCard>
-          <div className="thumbnail"></div>
-          <div className="content-info">
-            <div className="title">글 제목</div>
             <div className="summary">이곳에는 글 내용의 일부를 미리보기로 보여줍니다..</div>
-            <div className="meta">https://좋은글보려고왔습니다.com | 2024-01-01</div>
-          </div>
-        </ContentCard>
-        <ContentCard>
-          <div className="thumbnail"></div>
-          <div className="content-info">
-            <div className="title">글 제목</div>
             <div className="summary">이곳에는 글 내용의 일부를 미리보기로 보여줍니다..</div>
-            <div className="meta">https://좋은글보려고왔습니다.com | 2024-01-01</div>
+            <hr/>
+            <div className="meta-and-bookmark">
+              <div className="meta">https://좋은글보려고왔습니다.com | 2024-01-01</div>
+              <button className="bookmark-btn" onClick={toggleBookmark}>
+                <BookmarkIcon
+                  src={isBookmarked ? bookmarkIconFilled : bookmarkIconEmpty}
+                  alt="Bookmark"
+                />
+              </button>
+            </div>
           </div>
         </ContentCard>
 
