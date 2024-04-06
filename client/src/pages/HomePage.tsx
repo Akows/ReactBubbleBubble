@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import bookmarkIconEmpty from '../assets/bookmark_black_24dp.svg';
 import bookmarkIconFilled from '../assets/bookmark_border_black_24dp.svg';
+import ErrorComponent from '../components/utils/ErrorComponent';
+import LoadingIndicator from '../components/utils/LoadingIndicator';
 
 const Container = styled.div`
   background-color: #242424;
@@ -140,6 +142,9 @@ const HomePage: React.FC = () => {
 
   const [isBookmarked, setIsBookmarked] = useState(false); // 초기 북마크 상태는 false
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [showError, setShowError] = useState(true);
+
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked); // 현재 상태를 반대로 토글
   };
@@ -179,6 +184,16 @@ const HomePage: React.FC = () => {
         </ContentCard>
 
       </Container>
+
+      {/* 로딩 컴포넌트 */}
+      <LoadingIndicator isLoading={isLoading}/>
+
+      {/* 에러 컴포넌트 */}
+      <ErrorComponent  
+        showError={showError} 
+        errorName="오류 발생!" 
+        errorMessage="데이터를 불러오는 데 실패했습니다." 
+      />
     </>
   );
 };
