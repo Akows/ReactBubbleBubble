@@ -51,7 +51,7 @@ const CloseButton = styled.button`
 `;
 
 const ErrorComponent : React.FC<ErrorComponentProps> = ({ errorName, errorMessage }) => {
-  const [showError, setShowError] = useState(true);
+  const [showError, setShowError] = useState(false);
 
   const handleClose = () => {
     setShowError(false);

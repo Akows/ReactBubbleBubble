@@ -143,7 +143,7 @@ const HomePage: React.FC = () => {
   const [isBookmarked, setIsBookmarked] = useState(false); // 초기 북마크 상태는 false
 
   const [isLoading, setIsLoading] = useState(false);
-  const [showError, setShowError] = useState(true);
+  const [showError, setShowError] = useState(false);
 
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked); // 현재 상태를 반대로 토글
