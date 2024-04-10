@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { connectionTest, login, logout } from './authActions';
+import { createSlice } from '@reduxjs/toolkit';
+import { login, logout, verifyLogin } from './authActions';
 
 interface AuthState {
   isLoggedIn: boolean;
@@ -10,44 +10,73 @@ interface AuthState {
     googleId?: string;
     token?: string;
   } | null;
-  massage: string;
+  message: string;
+  isLoading: boolean;
+}
+
+interface ErrorResponse {
+  message: string;
 }
 
 const initialState: AuthState = {
   isLoggedIn: false,
   user: null,
-  massage: '',
+  message: '',
+  isLoading: false,
 };
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginSuccess: (state, action: PayloadAction<{ token: string }>) => {
-      state.user = { token: action.payload.token };
-      state.isLoggedIn = true;
-    },
-    logoutSuccess: (state) => {
-      state.user = null;
-      state.isLoggedIn = false;
-    },
+
   },
   extraReducers: (builder) => {
     builder
-      .addCase(connectionTest.fulfilled, (state, action) => {
-        state.massage = action.payload.massage;
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
       })
-
+      .addCase(logout.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(verifyLogin.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.isLoggedIn = true;
+        state.isLoading = false;
       })
-      .addCase(logout.fulfilled, (state) => {
+      .addCase(logout.fulfilled, (state, action) => {
         state.user = null;
         state.isLoggedIn = false;
+        state.message = action.payload.message;
+        state.isLoading = false;
+      })
+      .addCase(verifyLogin.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.isLoggedIn = true;
+        state.isLoading = false;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.isLoggedIn = false;
+        const errorMessage = (action.payload as ErrorResponse)?.message || '로그인 실패';
+        state.message = errorMessage;
+        state.isLoading = false;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.isLoggedIn = false;
+        const errorMessage = (action.payload as ErrorResponse)?.message || '로그아웃 실패';
+        state.message = errorMessage;
+        state.isLoading = false;
+      })
+      .addCase(verifyLogin.rejected, (state, action) => {
+        state.isLoggedIn = false;
+        const errorMessage = (action.payload as ErrorResponse)?.message || '로그인 유효성 검사 실패';
+        state.message = errorMessage;
+        state.isLoading = false;
       });
   },
 });
 
-export const { loginSuccess, logoutSuccess } = authSlice.actions;
 export default authSlice.reducer;

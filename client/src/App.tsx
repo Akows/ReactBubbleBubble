@@ -6,6 +6,9 @@ import { Header } from './components/layout/Header';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import UserPage from './pages/UserPage';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { verifyLogin } from './redux/auth/authActions';
 
 const MainContent = styled.main`
   display: flex;
@@ -15,6 +18,14 @@ const MainContent = styled.main`
 `;
 
 function App() {
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // 로그인 상태 유효성 검사
+    dispatch(verifyLogin());
+  }, [dispatch]);
+
   return (
     <BrowserRouter>
       <Header />

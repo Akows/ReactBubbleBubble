@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { logout } from '../../redux/auth/authActions';
+import { RootState } from '../../redux/store';
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -35,15 +38,23 @@ const MyPageButton = styled(StartButton)`
 
 export const Header: React.FC = () => {
 
-  // 페이지 이동을 위한 useNavigate
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
-  // 사용자 로그인 여부를 판별하는 state
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const handleLogout = () => {
+    dispatch(logout())
+      .then(() => {
+        navigate('/');
+      })
+      .catch(error => {
+        console.error('로그아웃 실패:', error);
+      });
+  };
 
   // 페이지 이동 로직 (미구현)
   const moveFunc = () => {
-    setIsLoggedIn(!isLoggedIn);
+    
   };
 
   return (
@@ -51,7 +62,10 @@ export const Header: React.FC = () => {
       <HeaderContainer>
         <Logo onClick={() => navigate('/')}>리액트글방울</Logo>
         {isLoggedIn ? (
-          <MyPageButton onClick={moveFunc}>마이 페이지</MyPageButton>
+          <>
+            <MyPageButton onClick={() => navigate('/mypage')}>마이 페이지</MyPageButton>
+            <StartButton onClick={handleLogout}>로그아웃</StartButton>
+          </>
         ) : (
           <StartButton onClick={moveFunc}>Google 계정으로 시작하기</StartButton>
         )}
