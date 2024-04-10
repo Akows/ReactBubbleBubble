@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { login, logout, test } from './authActions';
 
 interface AuthState {
   isLoggedIn: boolean;
@@ -9,28 +10,44 @@ interface AuthState {
     googleId?: string;
     token?: string;
   } | null;
+  massage: string;
 }
 
 const initialState: AuthState = {
   isLoggedIn: false,
   user: null,
+  massage: '',
 };
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginSuccess: (state, action: PayloadAction<AuthState['user']>) => {
-      state.user = action.payload;
+    loginSuccess: (state, action: PayloadAction<{ token: string }>) => {
+      state.user = { token: action.payload.token };
       state.isLoggedIn = true;
     },
-    logout: (state) => {
+    logoutSuccess: (state) => {
       state.user = null;
       state.isLoggedIn = false;
     },
-    // 추가 액션 리듀서들...
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(test.fulfilled, (state, action) => {
+        state.massage = action.payload.massage;
+      })
+
+      .addCase(login.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.isLoggedIn = true;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.isLoggedIn = false;
+      });
   },
 });
 
-export const { loginSuccess, logout } = authSlice.actions;
+export const { loginSuccess, logoutSuccess } = authSlice.actions;
 export default authSlice.reducer;
