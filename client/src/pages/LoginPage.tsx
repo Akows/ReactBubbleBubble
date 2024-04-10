@@ -3,7 +3,7 @@ import { GoogleOAuthProvider, GoogleLogin, googleLogout, CredentialResponse } fr
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { loginSuccess, logoutSuccess } from '../redux/auth/authSlice';
-import { test } from '../redux/auth/authActions';
+import { connectionTest } from '../redux/auth/authActions';
 
 const LoginPageContainer = styled.div`
   background-color: #242424;
@@ -75,7 +75,7 @@ const LoginPage: React.FC = () => {
     // Redux 스토어의 로그인 상태 업데이트
     // dispatch(logoutSuccess());
 
-    dispatch(test());
+    dispatch(connectionTest());
 
   };
 

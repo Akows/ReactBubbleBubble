@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { login, logout, test } from './authActions';
+import { connectionTest, login, logout } from './authActions';
 
 interface AuthState {
   isLoggedIn: boolean;
@@ -34,7 +34,7 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(test.fulfilled, (state, action) => {
+      .addCase(connectionTest.fulfilled, (state, action) => {
         state.massage = action.payload.massage;
       })
 
