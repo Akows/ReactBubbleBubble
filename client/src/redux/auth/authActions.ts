@@ -42,10 +42,11 @@ export const verifyLogin = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/verifylogin`, { withCredentials: true });
-      return response.data;
+      // 세션 기반 인증에서는 서버 응답을 상태에 반영
+      return { user: response.data.user, isLoggedIn: true };
     } catch (error) {
       const axiosError = error as AxiosError;
-      return rejectWithValue(axiosError.response?.data);
+      return rejectWithValue({ isLoggedIn: false, message: axiosError.response?.data });
     }
   }
 );

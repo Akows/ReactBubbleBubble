@@ -44,18 +44,19 @@ export const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload.user;
+        state.message = action.payload.message;
         state.isLoggedIn = true;
         state.isLoading = false;
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.user = null;
-        state.isLoggedIn = false;
         state.message = action.payload.message;
+        state.isLoggedIn = false;
         state.isLoading = false;
       })
       .addCase(verifyLogin.fulfilled, (state, action) => {
         state.user = action.payload.user;
-        state.isLoggedIn = true;
+        state.isLoggedIn = action.payload.isLoggedIn;
         state.isLoading = false;
       })
       .addCase(login.rejected, (state, action) => {

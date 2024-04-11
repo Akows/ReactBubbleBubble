@@ -1,7 +1,8 @@
+require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
 const cors = require('cors');
-const usersRouter = require('./routes/userRoutes');
-// const postsRouter = require('./routes/postRoutes');
+const usersRouter = require('./src/routes/userRoutes');
 
 const app = express();
 
@@ -19,12 +20,25 @@ const corsOptions = {
 // cors 미들웨어를 설정하여 크로스 오리진 요청을 허용
 app.use(cors(corsOptions));
 
-app.use('/users', usersRouter);
-// app.use('/posts', postsRouter);
+// 세션 설정
+app.use(session({
+  secret: process.env.SECRETKEY,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 1주일
+  }
+}));
 
-// 서버가 실행될 포트를 지정
-const PORT = process.env.PORT || 3000;
+// 서버 라우터
+app.use('/users', usersRouter);
+
+// 서버포트 설정
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`서버가 ${PORT} 포트에서 정상적으로 실행되었습니다`);
 });
