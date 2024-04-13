@@ -1,5 +1,9 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { logout } from '../redux/auth/authActions';
+import { RootState } from '../redux/store';
 
 const UserProfileContainer = styled.div`
   background-color: #242424;
@@ -54,17 +58,32 @@ const Button = styled.button`
 `;
 
 const UserPage: React.FC = () => {
-  const userEmail = "user@example.com"; // 예시 이메일 주소
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const userInfo= JSON.parse(localStorage.getItem('user'));
+  const email = userInfo.email;
+
+  const handleLogout = () => {
+    dispatch(logout())
+      .then(() => {
+        navigate('/');
+      })
+      .catch(error => {
+        console.error('로그아웃 실패:', error);
+      });
+  };
 
   return (
     <UserProfileContainer>
       <EmailInfo>
         <EmailLabel>현재 로그인한 사용자 이메일 주소:</EmailLabel>
-        <EmailAddress>{userEmail}</EmailAddress>
+        <EmailAddress>{email}</EmailAddress>
       </EmailInfo>
       <Divider />
       <ButtonGroup>
-        <Button>로그아웃</Button>
+        <Button onClick={handleLogout}>로그아웃</Button>
         <Button>회원탈퇴요청</Button>
       </ButtonGroup>
     </UserProfileContainer>
