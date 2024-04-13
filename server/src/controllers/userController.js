@@ -23,8 +23,17 @@ exports.login = async (req, res) => {
         };
 
         req.session.user = user;
-        
-        res.status(200).json({ message: "로그인 성공", user: user });
+
+        // 변경된 세션 정보를 명시적으로 저장
+        req.session.save(err => {
+            if (err) {
+                console.log(err);
+                throw err; // 에러가 발생하면 예외 처리
+            }
+            
+            // 세션이 저장되었으니 클라이언트에 성공 메시지 전송
+            res.status(200).json({ message: "로그인 성공", user: user });
+        });
     } catch (error) {
         res.status(401).json({ message: "인증 실패", error: error.toString() });
     }
@@ -32,18 +41,50 @@ exports.login = async (req, res) => {
 
 // 로그아웃 함수
 exports.logout = (req, res) => {
-    req.session.destroy(); // 세션 삭제
+    // // 세션 삭제
+    // req.session.destroy((err) => {
+    //     if (err) {
+    //         return res.status(500).json({ message: "로그아웃 실패" });
+    //     }
+
+    //     // 쿠키 삭제
+    //     res.clearCookie('session_cookie_name');
+        
+    //     // 클라이언트에 성공 메시지 전달
+    //     res.status(200).json({ message: "로그아웃 성공" });
+    // });
+
     res.status(200).json({ message: "로그아웃 성공" });
 };
 
 // 로그인 유효성 검사 함수
 exports.verifyLogin = async (req, res) => {
 
-    console.log(req.session);
+    const { token } = req.body;
 
-    if (req.session.user) {
-        res.status(200).json({ isValid: true, user: req.session.user });
-    } else {
-        res.status(401).json({ isValid: false, error: "유효하지 않은 세션입니다" });
+    if (token) {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: CLIENT_ID,
+        });
+    
+        const payload = ticket.getPayload();
+    
+        const user = {
+            email: payload['email'],
+            name: payload['name'],
+            picture: payload['picture']
+        };
+    
+        res.status(200).json({ message: "유효성 검사 통과", user: user });
     }
+    else {
+        res.status(200).json({ message: "유효성 검사 탈락" });
+    }
+
+    // if (req.session.user) {
+    //     res.status(200).json({ isValid: true, user: req.session.user });
+    // } else {
+    //     res.status(401).json({ isValid: false, error: "유효하지 않은 세션입니다" });
+    // }
 };

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 const cors = require('cors');
 const usersRouter = require('./src/routes/userRoutes');
 
@@ -20,11 +21,24 @@ const corsOptions = {
 // cors 미들웨어를 설정하여 크로스 오리진 요청을 허용
 app.use(cors(corsOptions));
 
+const options = {
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+};
+
+// MySQL에 세션 저장하기 위한 세션 스토어 생성
+const sessionStore = new MySQLStore(options);
+
 // 세션 설정
 app.use(session({
+  key: 'session_cookie_name',
   secret: process.env.SECRETKEY,
+  store: sessionStore,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
