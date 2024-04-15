@@ -3,7 +3,8 @@ const express = require('express');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const cors = require('cors');
-const usersRouter = require('./src/routes/userRoutes');
+const usersRouter = require('./routes/userRoutes');
+const rssRouter = require('./routes/rssRoutes');
 
 const app = express();
 
@@ -50,9 +51,7 @@ app.use(session({
 // 서버 라우터
 app.use('/users', usersRouter);
 
-// 서버포트 설정
-const PORT = process.env.PORT || 3001;
+// RSS 라우터
+app.use('/rss', rssRouter);
 
-app.listen(PORT, () => {
-  console.log(`서버가 ${PORT} 포트에서 정상적으로 실행되었습니다`);
-});
+module.exports = app;
