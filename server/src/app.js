@@ -54,4 +54,13 @@ app.use('/users', usersRouter);
 // RSS 라우터
 app.use('/rss', rssRouter);
 
+// RSS 피드를 이용하여 글을 가져오는 기능은 프론트엔드에서 호출할 필요가 없음
+// 따라서 백엔드에서 주기적으로 해당 함수를 호출하여 글을 저장하도록 해야함.
+const job = new cron.CronJob('0 0 0 * * *', function() {
+  console.log('Cron job started: Fetching and storing RSS feeds');
+  rssController.fetchAndStoreRssFeeds(); // 여기서 req, res가 필요하지 않으므로 매개변수 없이 호출
+}, null, true, 'Asia/Seoul');
+
+job.start(); // Cron job 시작
+
 module.exports = app;

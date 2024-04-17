@@ -7,21 +7,29 @@ const feedUrls = [
   'https://overreacted.io/rss.xml',
 ];
 
-exports.fetchAndStoreRssFeeds = async (req, res) => {
+exports.fetchAndStoreRssFeeds = async () => {
   try {
     for (let url of feedUrls) {
       const feed = await parser.parseURL(url);
       await Promise.all(feed.items.map(async (item) => {
-        const { title, link, contentSnippet, isoDate } = item;
+        const { title, link, contentSnippet, isoDate, guid } = item;
 
-        console.log(title, link);
-
-        // const [rows] = await db.query('INSERT INTO Contents (title, link, description, publishedDate) VALUES (?, ?, ?, ?)', [title, link, contentSnippet, isoDate]);
+        // 데이터베이스 쿼리 실행 (중복된 데이터를 방지하기 위해 `guid` 필드 사용)
+        const sql = `
+          INSERT INTO RBBContents (title, link, description, publishedDate, guid)
+          VALUES (?, ?, ?, ?, ?)
+          ON DUPLICATE KEY UPDATE
+          title = VALUES(title),
+          link = VALUES(link),
+          description = VALUES(description),
+          publishedDate = VALUES(publishedDate);
+        `;
+        await db.query(sql, [title, link, contentSnippet, isoDate, guid]);
       }));
     }
-    res.status(200).send('RSS Feeds fetched and stored successfully.');
+    console.log('RSS 피드가 성공적으로 가져오고 저장되었습니다.');
+
   } catch (error) {
-    console.error('Failed to fetch or store RSS feeds:', error);
-    res.status(500).send('Error fetching or storing RSS feeds.');
+    console.error('RSS 피드를 가져오거나 저장하는데 실패했습니다:', error);
   }
 };
