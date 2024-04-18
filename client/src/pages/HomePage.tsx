@@ -141,37 +141,46 @@ const BookmarkIcon = styled.img`
   height: 24px;
 `;
 
-const HomePage: React.FC = () => {
+const HomePage = () => {
   const { contents, isLoading, error } = useSelector(state => state.contents);
   const dispatch = useDispatch();
 
-  // 로컬 스토리지에서 북마크 상태 로드
-  const [bookmarks, setBookmarks] = useState(() => {
-    return JSON.parse(localStorage.getItem('bookmarks')) || [];
-  });
+  const [bookmarks, setBookmarks] = useState(() => JSON.parse(localStorage.getItem('bookmarks')) || []);
+  const [viewMode, setViewMode] = useState('all'); // 전체 보기 또는 북마크 보기 모드
 
   useEffect(() => {
     dispatch(fetchContents());
   }, [dispatch]);
 
-  console.log(contents);
-
-  const toggleBookmark = (id) => {
-    const newBookmarks = bookmarks.includes(id) ? bookmarks.filter(b => b !== id) : [...bookmarks, id];
+  const toggleBookmark = (contentId) => {
+    const newBookmarks = bookmarks.includes(contentId) ? bookmarks.filter(b => b !== contentId) : [...bookmarks, contentId];
     setBookmarks(newBookmarks);
     localStorage.setItem('bookmarks', JSON.stringify(newBookmarks));
   };
 
+  const openInNewTab = (url) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   const renderContentCards = () => {
-    return contents?.map(content => (
-      <ContentCard key={content.contentId}>
+    const displayContents = viewMode === 'bookmarked'
+      ? contents.filter(content => bookmarks.includes(content.contentId))
+      : contents;
+
+    // 콘텐츠가 없는 경우 메시지 표시
+    if (displayContents.length === 0) {
+      return <div style={{ color: 'white', textAlign: 'center', marginTop: '20px' }}>내용이 존재하지 않습니다.</div>;
+    }
+
+    return displayContents.map(content => (
+      <ContentCard key={content.contentId} onClick={() => openInNewTab(content.link)}>
         <div className="thumbnail" style={{ backgroundImage: `url(${content.thumbnailUrl})` }}></div>
         <div className="content-info">
           <div className="title">{content.title}</div>
           <div className="summary">{content.summary}</div>
           <div className="meta-and-bookmark">
-            <div className="meta">{content.url} | {new Date(content.publishedDate).toLocaleDateString()}</div>
-            <button className="bookmark-btn" onClick={() => toggleBookmark(content.contentId)}>
+            <div className="meta">{new Date(content.publishedDate).toLocaleDateString()}</div>
+            <button className="bookmark-btn" onClick={(e) => { e.stopPropagation(); toggleBookmark(content.contentId); }}>
               <BookmarkIcon src={bookmarks.includes(content.contentId) ? bookmarkIconFilled : bookmarkIconEmpty} alt="Bookmark" />
             </button>
           </div>
@@ -185,8 +194,12 @@ const HomePage: React.FC = () => {
       <Head>전 세계에 있는 React.js 글을 한 번에 모아보기!</Head>
       <SearchBarContainer>
         <Input type="text" placeholder="검색어를 입력해주세요" />
-        <Button>Search</Button>
+        <Button onClick={() => dispatch(fetchContents())}>Search</Button>
       </SearchBarContainer>
+      <ButtonsRow>
+        <Button onClick={() => setViewMode('all')}>전체보기</Button>
+        <Button onClick={() => setViewMode('bookmarked')}>북마크보기</Button>
+      </ButtonsRow>
       <InfiniteScroll
         dataLength={contents.length}
         next={() => dispatch(fetchContents())}
