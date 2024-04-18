@@ -9,10 +9,17 @@ const initialState = {
 };
 
 // 비동기 함수: 전체 글 데이터를 불러오는 API 호출
-export const fetchContents = createAsyncThunk('contents/fetchContents', async () => {
-  const response = await axios.get(`${import.meta.env.VITE_API_URL}/contents/fetchContents`);
-  return response.data;
-});
+// searchTerm과 sortOrder를 매개변수로 추가
+export const fetchContents = createAsyncThunk(
+  'contents/fetchContents',
+  async ({ searchTerm = '', sortOrder = 'desc' }, {}) => {
+    const url = `${import.meta.env.VITE_API_URL}/contents/fetchContents`;
+    const response = await axios.get(url, {
+      params: { searchTerm, sortOrder }
+    });
+    return response.data;
+  }
+);
 
 const contentsSlice = createSlice({
   name: 'contents',
@@ -26,6 +33,12 @@ const contentsSlice = createSlice({
         state.bookmarks.push(action.payload); // 북마크 설정
       }
     },
+    setSearchTerm: (state, action) => {
+      state.searchTerm = action.payload;
+    },
+    setSortOrder: (state, action) => {
+      state.sortOrder = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -44,6 +57,6 @@ const contentsSlice = createSlice({
   },
 });
 
-export const { toggleBookmark } = contentsSlice.actions;
+export const { toggleBookmark, setSearchTerm, setSortOrder } = contentsSlice.actions;
 
 export default contentsSlice.reducer;

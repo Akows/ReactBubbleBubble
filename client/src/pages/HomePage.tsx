@@ -147,10 +147,20 @@ const HomePage = () => {
 
   const [bookmarks, setBookmarks] = useState(() => JSON.parse(localStorage.getItem('bookmarks')) || []);
   const [viewMode, setViewMode] = useState('all'); // 전체 보기 또는 북마크 보기 모드
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc'); // desc
 
   useEffect(() => {
-    dispatch(fetchContents());
-  }, [dispatch]);
+    dispatch(fetchContents({ searchTerm, sortOrder }));
+  }, [dispatch, searchTerm, sortOrder]);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSortChange = (event) => {
+    setSortOrder(event.target.value);
+  };
 
   const toggleBookmark = (contentId) => {
     const newBookmarks = bookmarks.includes(contentId) ? bookmarks.filter(b => b !== contentId) : [...bookmarks, contentId];
@@ -167,12 +177,7 @@ const HomePage = () => {
       ? contents.filter(content => bookmarks.includes(content.contentId))
       : contents;
 
-    // 콘텐츠가 없는 경우 메시지 표시
-    if (displayContents.length === 0) {
-      return <div style={{ color: 'white', textAlign: 'center', marginTop: '20px' }}>내용이 존재하지 않습니다.</div>;
-    }
-
-    return displayContents.map(content => (
+    return displayContents.length > 0 ? displayContents.map(content => (
       <ContentCard key={content.contentId} onClick={() => openInNewTab(content.link)}>
         <div className="thumbnail" style={{ backgroundImage: `url(${content.thumbnailUrl})` }}></div>
         <div className="content-info">
@@ -186,15 +191,19 @@ const HomePage = () => {
           </div>
         </div>
       </ContentCard>
-    ));
+    )) : <div style={{ color: 'white', textAlign: 'center', marginTop: '20px' }}>No contents found.</div>;
   };
 
   return (
     <Container>
       <Head>전 세계에 있는 React.js 글을 한 번에 모아보기!</Head>
       <SearchBarContainer>
-        <Input type="text" placeholder="검색어를 입력해주세요" />
-        <Button onClick={() => dispatch(fetchContents())}>Search</Button>
+        <Input type="text" placeholder="검색어를 입력해주세요" value={searchTerm} onChange={handleSearchChange}  />
+        <select value={sortOrder} onChange={handleSortChange}>
+          <option value="desc">최신순</option>
+          <option value="asc">오래된순</option>
+        </select>
+        <Button onClick={() => dispatch(fetchContents({ searchTerm, sortOrder }))}>Search</Button>
       </SearchBarContainer>
       <ButtonsRow>
         <Button onClick={() => setViewMode('all')}>전체보기</Button>
@@ -202,7 +211,7 @@ const HomePage = () => {
       </ButtonsRow>
       <InfiniteScroll
         dataLength={contents.length}
-        next={() => dispatch(fetchContents())}
+        next={() => dispatch(fetchContents({ searchTerm, sortOrder }))}
         hasMore={true}
         loader={<LoadingIndicator />}
       >
