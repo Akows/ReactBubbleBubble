@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const contentController = require('../controllers/contentController.js');
+const contentsController = require('../controllers/contentController');
 
-router.post('/test', contentController.test);
+// 전체 콘텐츠 조회 라우트
+router.get('/fetchContents', contentsController.fetchAllContents);
+
+module.exports = router;

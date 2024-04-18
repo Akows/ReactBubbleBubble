@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import bookmarkIconEmpty from '../assets/bookmark_black_24dp.svg';
 import bookmarkIconFilled from '../assets/bookmark_border_black_24dp.svg';
 import ErrorComponent from '../components/utils/ErrorComponent';
 import LoadingIndicator from '../components/utils/LoadingIndicator';
+import { fetchContents } from '../redux/contents/contentsSlice';
 
 const Container = styled.div`
   background-color: #242424;
@@ -139,62 +142,62 @@ const BookmarkIcon = styled.img`
 `;
 
 const HomePage: React.FC = () => {
+  const { contents, isLoading, error } = useSelector(state => state.contents);
+  const dispatch = useDispatch();
 
-  const [isBookmarked, setIsBookmarked] = useState(false); // 초기 북마크 상태는 false
+  // 로컬 스토리지에서 북마크 상태 로드
+  const [bookmarks, setBookmarks] = useState(() => {
+    return JSON.parse(localStorage.getItem('bookmarks')) || [];
+  });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [showError, setShowError] = useState(false);
+  useEffect(() => {
+    dispatch(fetchContents());
+  }, [dispatch]);
 
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked); // 현재 상태를 반대로 토글
+  console.log(contents);
+
+  const toggleBookmark = (id) => {
+    const newBookmarks = bookmarks.includes(id) ? bookmarks.filter(b => b !== id) : [...bookmarks, id];
+    setBookmarks(newBookmarks);
+    localStorage.setItem('bookmarks', JSON.stringify(newBookmarks));
+  };
+
+  const renderContentCards = () => {
+    return contents?.map(content => (
+      <ContentCard key={content.contentId}>
+        <div className="thumbnail" style={{ backgroundImage: `url(${content.thumbnailUrl})` }}></div>
+        <div className="content-info">
+          <div className="title">{content.title}</div>
+          <div className="summary">{content.summary}</div>
+          <div className="meta-and-bookmark">
+            <div className="meta">{content.url} | {new Date(content.publishedDate).toLocaleDateString()}</div>
+            <button className="bookmark-btn" onClick={() => toggleBookmark(content.contentId)}>
+              <BookmarkIcon src={bookmarks.includes(content.contentId) ? bookmarkIconFilled : bookmarkIconEmpty} alt="Bookmark" />
+            </button>
+          </div>
+        </div>
+      </ContentCard>
+    ));
   };
 
   return (
-    <>
-      <Container>
-        <Head>전 세계에 있는 React.js 글을 한 번에 모아보기!</Head>
-        <SearchBarContainer>
-          <Input type="text" placeholder="검색어를 입력해주세요" />
-          <Button>Search</Button>
-        </SearchBarContainer>
-        <ButtonsRow>
-          <Button>전체보기</Button>
-          <Button>북마크보기</Button>
-        </ButtonsRow>
-
-        {/* map 함수로 컨텐츠들을 렌더링하는 부분.. */}
-        <ContentCard>
-          <div className="thumbnail"></div>
-          <div className="content-info">
-            <div className="title">글 제목</div>
-            <div className="summary">이곳에는 글 내용의 일부를 미리보기로 보여줍니다..</div>
-            <div className="summary">이곳에는 글 내용의 일부를 미리보기로 보여줍니다..</div>
-            <div className="summary">이곳에는 글 내용의 일부를 미리보기로 보여줍니다..</div>
-            <hr/>
-            <div className="meta-and-bookmark">
-              <div className="meta">https://좋은글보려고왔습니다.com | 2024-01-01</div>
-              <button className="bookmark-btn" onClick={toggleBookmark}>
-                <BookmarkIcon
-                  src={isBookmarked ? bookmarkIconFilled : bookmarkIconEmpty}
-                  alt="Bookmark"
-                />
-              </button>
-            </div>
-          </div>
-        </ContentCard>
-
-      </Container>
-
-      {/* 로딩 컴포넌트 */}
-      <LoadingIndicator isLoading={isLoading}/>
-
-      {/* 에러 컴포넌트 */}
-      <ErrorComponent  
-        showError={showError} 
-        errorName="오류 발생!" 
-        errorMessage="데이터를 불러오는 데 실패했습니다." 
-      />
-    </>
+    <Container>
+      <Head>전 세계에 있는 React.js 글을 한 번에 모아보기!</Head>
+      <SearchBarContainer>
+        <Input type="text" placeholder="검색어를 입력해주세요" />
+        <Button>Search</Button>
+      </SearchBarContainer>
+      <InfiniteScroll
+        dataLength={contents.length}
+        next={() => dispatch(fetchContents())}
+        hasMore={true}
+        loader={<LoadingIndicator />}
+      >
+        {renderContentCards()}
+      </InfiniteScroll>
+      {isLoading && <LoadingIndicator />}
+      {error && <ErrorComponent showError={error} errorName="오류 발생!" errorMessage="데이터를 불러오는 데 실패했습니다." />}
+    </Container>
   );
 };
 

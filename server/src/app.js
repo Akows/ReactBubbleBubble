@@ -3,8 +3,10 @@ const express = require('express');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const cors = require('cors');
+const cron = require('cron');
 const usersRouter = require('./routes/userRoutes');
 const rssRouter = require('./routes/rssRoutes');
+const contentRoutes = require('./routes/contentRoutes');
 
 const app = express();
 
@@ -53,6 +55,9 @@ app.use('/users', usersRouter);
 
 // RSS 라우터
 app.use('/rss', rssRouter);
+
+// 글 라우터
+app.use('/contents', contentRoutes);
 
 // RSS 피드를 이용하여 글을 가져오는 기능은 프론트엔드에서 호출할 필요가 없음
 // 따라서 백엔드에서 주기적으로 해당 함수를 호출하여 글을 저장하도록 해야함.

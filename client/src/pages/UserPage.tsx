@@ -62,7 +62,7 @@ const UserPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const userInfo= JSON.parse(localStorage.getItem('user'));
+  const userInfo = JSON.parse(localStorage.getItem('user'));
   const email = userInfo.email;
 
   const handleLogout = () => {
