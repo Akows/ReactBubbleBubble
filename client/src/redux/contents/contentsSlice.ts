@@ -3,21 +3,24 @@ import axios from 'axios';
 
 const initialState = {
   contents: [],
-  bookmarks: [],
+  page: 1,
+  hasMore: true,
   isLoading: false,
-  error: null,
+  error: null
 };
 
 // 비동기 함수: 전체 글 데이터를 불러오는 API 호출
-// searchTerm과 sortOrder를 매개변수로 추가
 export const fetchContents = createAsyncThunk(
   'contents/fetchContents',
-  async ({ searchTerm = '', sortOrder = 'desc' }, {}) => {
+  async ({ searchTerm = '', sortOrder = 'desc', page = 1, limit = 10 }, { getState }) => {
     const url = `${import.meta.env.VITE_API_URL}/contents/fetchContents`;
     const response = await axios.get(url, {
-      params: { searchTerm, sortOrder }
+      params: { searchTerm, sortOrder, page, limit }
     });
-    return response.data;
+    return {
+      data: response.data.contents,
+      total: response.data.total
+    };
   }
 );
 
@@ -33,6 +36,11 @@ const contentsSlice = createSlice({
         state.bookmarks.push(action.payload); // 북마크 설정
       }
     },
+    resetContents: (state) => {
+      state.contents = [];
+      state.page = 1;
+      state.hasMore = true;
+    },
     setSearchTerm: (state, action) => {
       state.searchTerm = action.payload;
     },
@@ -47,7 +55,10 @@ const contentsSlice = createSlice({
       })
       .addCase(fetchContents.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.contents = action.payload;
+        const newContents = action.payload.data;
+        state.contents = [...state.contents, ...newContents];
+        state.page += 1;
+        state.hasMore = state.contents.length < action.payload.total;
         state.error = null;
       })
       .addCase(fetchContents.rejected, (state, action) => {
@@ -57,6 +68,6 @@ const contentsSlice = createSlice({
   },
 });
 
-export const { toggleBookmark, setSearchTerm, setSortOrder } = contentsSlice.actions;
+export const { toggleBookmark, resetContents, setSearchTerm, setSortOrder } = contentsSlice.actions;
 
 export default contentsSlice.reducer;

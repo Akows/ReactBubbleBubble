@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -6,7 +6,7 @@ import bookmarkIconEmpty from '../assets/bookmark_black_24dp.svg';
 import bookmarkIconFilled from '../assets/bookmark_border_black_24dp.svg';
 import ErrorComponent from '../components/utils/ErrorComponent';
 import LoadingIndicator from '../components/utils/LoadingIndicator';
-import { fetchContents } from '../redux/contents/contentsSlice';
+import { fetchContents, resetContents } from '../redux/contents/contentsSlice';
 
 const Container = styled.div`
   background-color: #242424;
@@ -142,7 +142,7 @@ const BookmarkIcon = styled.img`
 `;
 
 const HomePage: React.FC = () => {
-  const { contents, isLoading, error } = useSelector(state => state.contents);
+  const { contents, isLoading, error, hasMore, page } = useSelector(state => state.contents);
   const dispatch = useDispatch();
 
   const [bookmarks, setBookmarks] = useState(() => JSON.parse(localStorage.getItem('bookmarks')) || []);
@@ -150,9 +150,15 @@ const HomePage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('desc'); // desc
 
-  useEffect(() => {
-    dispatch(fetchContents({ searchTerm, sortOrder }));
+  const handleSearch = useCallback(() => {
+    dispatch(resetContents());
+    dispatch(fetchContents({ searchTerm, sortOrder, page: 1 }));
   }, [dispatch, searchTerm, sortOrder]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch]);
+
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -170,6 +176,12 @@ const HomePage: React.FC = () => {
 
   const openInNewTab = (url) => {
     window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const loadMoreContents = () => {
+    if (hasMore) {
+      dispatch(fetchContents({ searchTerm, sortOrder, page }));
+    }
   };
 
   const renderContentCards = () => {
@@ -211,8 +223,8 @@ const HomePage: React.FC = () => {
       </ButtonsRow>
       <InfiniteScroll
         dataLength={contents.length}
-        next={() => dispatch(fetchContents({ searchTerm, sortOrder }))}
-        hasMore={true}
+        next={loadMoreContents}
+        hasMore={hasMore}
         loader={<LoadingIndicator />}
       >
         {renderContentCards()}
