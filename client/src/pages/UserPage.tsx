@@ -84,7 +84,6 @@ const UserPage: React.FC = () => {
       <Divider />
       <ButtonGroup>
         <Button onClick={handleLogout}>로그아웃</Button>
-        <Button>회원탈퇴요청</Button>
       </ButtonGroup>
     </UserProfileContainer>
   );

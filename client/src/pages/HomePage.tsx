@@ -141,7 +141,7 @@ const BookmarkIcon = styled.img`
   height: 24px;
 `;
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
   const { contents, isLoading, error } = useSelector(state => state.contents);
   const dispatch = useDispatch();
 
@@ -179,14 +179,14 @@ const HomePage = () => {
 
     return displayContents.length > 0 ? displayContents.map(content => (
       <ContentCard key={content.contentId} onClick={() => openInNewTab(content.link)}>
-        <div className="thumbnail" style={{ backgroundImage: `url(${content.thumbnailUrl})` }}></div>
+        {/* <div className="thumbnail" style={{ backgroundImage: `url(${content.thumbnailUrl})` }}></div> */}
         <div className="content-info">
           <div className="title">{content.title}</div>
           <div className="summary">{content.summary}</div>
           <div className="meta-and-bookmark">
             <div className="meta">{new Date(content.publishedDate).toLocaleDateString()}</div>
             <button className="bookmark-btn" onClick={(e) => { e.stopPropagation(); toggleBookmark(content.contentId); }}>
-              <BookmarkIcon src={bookmarks.includes(content.contentId) ? bookmarkIconFilled : bookmarkIconEmpty} alt="Bookmark" />
+              <BookmarkIcon src={bookmarks.includes(content.contentId) ? bookmarkIconEmpty : bookmarkIconFilled} alt="Bookmark" />
             </button>
           </div>
         </div>

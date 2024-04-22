@@ -29,11 +29,16 @@ const AboutButton = styled.button`
 `;
 
 export const Footer: React.FC = () => {
+
+  const openToLYS = () => {
+    window.open('https://my-portfolio-nu-ten-65.vercel.app/', '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <>
       <FooterContainer>
         <CopyrightText>이 프로젝트는 저작권이 없는 오픈소스 프로젝트입니다.</CopyrightText>
-        <AboutButton>제작자 소개</AboutButton>
+        <AboutButton onClick={openToLYS}>제작자 소개</AboutButton>
       </FooterContainer>
     </>
   )
