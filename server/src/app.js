@@ -51,13 +51,13 @@ app.use(session({
 }));
 
 // 서버 라우터
-app.use('/users', usersRouter);
+app.use('/rbb/users', usersRouter);
 
 // RSS 라우터
-app.use('/rss', rssRouter);
+app.use('/rbb/rss', rssRouter);
 
 // 글 라우터
-app.use('/contents', contentRoutes);
+app.use('/rbb/contents', contentRoutes);
 
 // RSS 피드를 이용하여 글을 가져오는 기능은 프론트엔드에서 호출할 필요가 없음
 // 따라서 백엔드에서 주기적으로 해당 함수를 호출하여 글을 저장하도록 해야함.
