@@ -48,6 +48,24 @@ const Input = styled.input`
   }
 `;
 
+const Select = styled.select`
+  padding: 0.5rem 1rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+
+  &:hover {
+    background-color: #555;
+  }
+
+  @media (min-width: 768px) {
+    margin-left: 0.5rem;
+  }
+`;
+
 const Button = styled.button`
   padding: 0.5rem 1rem;
   background-color: #333;
@@ -211,11 +229,11 @@ const HomePage: React.FC = () => {
       <Head>전 세계에 있는 React.js 글을 한 번에 모아보기!</Head>
       <SearchBarContainer>
         <Input type="text" placeholder="검색어를 입력해주세요" value={searchTerm} onChange={handleSearchChange}  />
-        <select value={sortOrder} onChange={handleSortChange}>
+        <Select value={sortOrder} onChange={handleSortChange}>
           <option value="desc">최신순</option>
           <option value="asc">오래된순</option>
-        </select>
-        <Button onClick={() => dispatch(fetchContents({ searchTerm, sortOrder }))}>Search</Button>
+        </Select>
+        {/* <Button onClick={() => dispatch(fetchContents({ searchTerm, sortOrder }))}>Search</Button> */}
       </SearchBarContainer>
       <ButtonsRow>
         <Button onClick={() => setViewMode('all')}>전체보기</Button>
